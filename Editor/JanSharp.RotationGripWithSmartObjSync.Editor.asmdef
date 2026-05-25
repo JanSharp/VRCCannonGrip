@@ -1,0 +1,22 @@
+{
+    "name": "JanSharp.RotationGripWithSmartObjSync.Editor",
+    "references": [
+        "JanSharp.RotationGripWithSmartObjSync",
+        "JanSharp.Common",
+        "JanSharp.Common.Editor",
+        "com.mmmaellon.smartobjectsync",
+        "UdonSharp.Runtime",
+        "UdonSharp.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

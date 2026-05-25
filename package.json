@@ -1,0 +1,20 @@
+{
+  "name": "com.jansharp.rotation-grip-with-smart-obj-sync",
+  "version": "1.0.0",
+  "description": "Rotate objects around an anchor point using VRC Pickups, synced using Smart Object Sync.",
+  "displayName": "Rotation Grip With Smart Obj Sync",
+  "unity": "2022.3",
+  "author": {
+    "name": "JanSharp",
+    "email": "steinmeister36@gmail.com",
+    "url": "https://jansharp.github.io"
+  },
+  "license": "MIT",
+  "vpmDependencies": {
+    "com.vrchat.worlds": "^3.10.x",
+    "com.jansharp.common": ">=1.0.0",
+    "com.mmmaellon.smartobjectsync": "3.10.16"
+  },
+  "url": "https://github.com/JanSharp/VRCRotationGripWithSmartObjSync/releases/download/v1.0.0/com.jansharp.rotation-grip-with-smart-obj-sync.zip",
+  "changelogUrl": "https://github.com/JanSharp/VRCRotationGripWithSmartObjSync/blob/v1.0.0/CHANGELOG.md"
+}
