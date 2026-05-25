@@ -47,11 +47,10 @@ namespace JanSharp
 
         private void SnapBack()
         {
-            objSync.TeleportToWorldSpace(
-                GetSnappedPosition(),
-                GetSnappedRotation(),
-                newVel: Vector3.zero,
-                newSpin: Vector3.zero);
+            // The SmartObjectSync ends up syncing whatever the current position and rotation is.
+            // It even changes its state 1 frame delayed after dropping, so this is definitely safe, there's
+            // no way for it to fetch and sync the wrong values.
+            transform.SetPositionAndRotation(GetSnappedPosition(), GetSnappedRotation());
         }
 
         private void StartDistanceCheckLoop()
