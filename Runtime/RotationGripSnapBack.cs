@@ -1,10 +1,10 @@
-﻿using MMMaellon;
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 namespace JanSharp
 {
-    [RequireComponent(typeof(SmartObjectSync))]
+    [RequireComponent(typeof(VRC_Pickup))]
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // Manual because it's on the same object as the smart object sync script.
     public class RotationGripSnapBack : UdonSharpBehaviour
     {
@@ -22,11 +22,11 @@ namespace JanSharp
         private Vector3 offsetVector;
         /// <inheritdoc cref="offsetVector"/>
         private Quaternion offsetRotation;
-        private SmartObjectSync objSync;
+        private VRC_Pickup pickup;
 
         private void Start()
         {
-            objSync = GetComponent<SmartObjectSync>();
+            pickup = GetComponent<VRC_Pickup>();
             offsetVector = toSnapTo.InverseTransformPoint(transform.position);
             offsetRotation = Quaternion.Inverse(toSnapTo.rotation) * transform.rotation;
         }
@@ -76,7 +76,7 @@ namespace JanSharp
             }
             float distance = Vector3.Distance(GetSnappedPosition(), transform.position);
             if (distance > maxAllowedDistanceAway)
-                objSync.pickup.Drop();
+                pickup.Drop();
             SendCustomEventDelayedSeconds(nameof(DistanceCheckLoop), DistanceCheckLoopUpdateInterval);
         }
     }
