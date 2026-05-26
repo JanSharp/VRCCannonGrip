@@ -168,59 +168,6 @@ namespace JanSharp
             Vector3 unconstrainedForward = unconstrainedToRotateLocalRotation * Vector3.forward;
             Vector3 up = toRotate.localRotation * Vector3.up; // Must also be in local space. Everything is in local space here.
             toRotate.localRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(unconstrainedForward, up).normalized, up);
-
-            // The fact that I got the aim constraint to work is already pretty, how to say, fulfilling. A big achievement.
-            // The rotation constraint... I'll think about it.
-            // It needs to only rotate around the Y axis
-            // But doing that seems really hard once the up vectors of the 2 objects don't align
-            // ok so I'm thinking we need to initially calculate offsets from the object toAim to the object toRotate
-            // such that in that current state, we can take the toAim rotation and convert it to the toRotate rotation
-            // local rotation. to be specific.
-            // but intermediate steps must be in world space, since we have no control over the hierarchy.
-            // now speaking of hierarchy
-            // there is the argument made for this specific use case that it should have enforced hierarchy
-            // specifically having the mount be the parent of the cannon
-            // and then rotate the mount around the Y axis
-            // and rotate the cannon around the X axis
-            // Well I say axis, up direction and right direction
-            // But I don't think that's good?
-            // It's more restrictive in the setup
-            // The math would probably be easier though, since it can be done with projections of vectors onto planes
-            // which I don't know by heart, but it's something with the cross product I think
-            // actually there is Vector3.ProjectOnPlane()
-            // but I'm kind of curious if I can manage to implement a full on rotation constraint. well almost full on
-            // alright, cool
-            // mostly
-            // it does not update for late joiners
-            // and I don't know if there even is any event I could possibly listen to to fix that
-            // again
-            // the SmartObjectSyncs are severely lacking in API design
-            // ok not severely, the custom states are pretty neat
-            // thing is just that a full custom state implementation is overkill for what I'm trying to do here
-            // and the events for the listeners is where the API design is lacking significantly
-            // but alright
-            // I'm good
-            // I'm reasonably content
-            // next step is fixing this late joiner issue, somehow, I truly don't know how yet
-            // I think we might actually get a state change to sleeping because default state is teleporting
-            // which does mean that if somebody wanted an event for deserialization but they use the teleport
-            // functions, they're pretty screwed
-            // actually no, it doesn't compare against the previous state...
-            // but wait, VRChat's field change callback only gets raised for synced variables if the value
-            // actually changed
-            // so never mind
-            // they are screwed
-            // alright anyway since I'm not teleporting I should be fine to use the state change event,
-            // the first one we get, to set the current aim and rotation transforms, even though the state is sleeping.
-            // and then after fixing that bug, the next step is making what I described previously, that of
-            // creating a variant which does require certain hierarchy, and works through projection onto planes nearly entirely
-            // which is a bit more restrictive for the map creator, but way easier to implement, and most likely
-            // also computationally less expensive
-            // the constraints as I've implemented them now could probably also be optimized
-            // but I am not good enough at math to do that
-            // I just do what makes sense in my head, what I can visualize
-            // and that's that
-            // if there's a better way, I don't know about it
         }
     }
 }
