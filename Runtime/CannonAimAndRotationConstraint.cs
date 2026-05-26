@@ -14,32 +14,17 @@ namespace JanSharp
         /// </summary>
         [System.NonSerialized] public int customUpdateInternalIndex;
 
-        private bool receivedFirstStateChange = false;
-
-        private const float TimeBetweenDistanceChecks = 0.25f;
-        private float nextDistanceCheckTime;
-
         [SerializeField][FindInParent] private SmartObjectSync objSync;
         private Transform pickupTransform;
         [SerializeField] private Transform toRotate;
         [SerializeField] private Transform toAim;
-        [Tooltip("When the pickup gets moved too far away from its snap position, drop it.")]
-        [Min(0.1f)]
-        [SerializeField] private float maxAllowedDistanceAway = 1f;
-        /// <summary>
-        /// <para>In <see cref="toAim"/> local space, respecting its scaling too.</para>
-        /// </summary>
-        private Vector3 pickupOffsetVector;
-        /// <summary>
-        /// <para>In <see cref="toAim"/> local space.</para>
-        /// </summary>
-        private Quaternion pickupOffsetRotation;
 
         private Quaternion aimNeutralLocalRotation;
         private Quaternion aimLookingOffsetRotation;
 
         private Quaternion aimToRotateOffsetRotation;
 
+        private bool receivedFirstStateChange = false;
         private bool isMoving = false;
 
         private void Start()
@@ -50,9 +35,6 @@ namespace JanSharp
             aimLookingOffsetRotation = Quaternion.Inverse(GetLookingRotation()) * aimNeutralLocalRotation;
 
             aimToRotateOffsetRotation = Quaternion.Inverse(GetAimRotationInSameSpaceAsToRotate()) * toRotate.localRotation;
-
-            pickupOffsetVector = toAim.InverseTransformPoint(pickupTransform.position);
-            pickupOffsetRotation = Quaternion.Inverse(toAim.rotation) * pickupTransform.rotation;
 
             objSync.AddListener(this);
 
@@ -136,7 +118,6 @@ namespace JanSharp
 
         private void OnStartMoving()
         {
-            nextDistanceCheckTime = Time.time + TimeBetweenDistanceChecks;
             AimAndRotate();
             updateManager.Register(this);
         }
@@ -144,46 +125,12 @@ namespace JanSharp
         private void OnStopMoving()
         {
             AimAndRotate();
-            SnapBack();
             updateManager.Deregister(this);
-        }
-
-        private Vector3 GetSnappedPosition() => toAim.TransformPoint(pickupOffsetVector);
-        private Quaternion GetSnappedRotation() => toAim.rotation * pickupOffsetRotation;
-
-        private void SnapBack()
-        {
-            // The SmartObjectSync ends up syncing whatever the current position and rotation is.
-            // It even changes its state 1 frame delayed after dropping, so this is definitely safe, there's
-            // no way for it to fetch and sync the wrong values.
-            pickupTransform.SetPositionAndRotation(GetSnappedPosition(), GetSnappedRotation());
         }
 
         public void CustomUpdate()
         {
             AimAndRotate();
-
-            float time = Time.time;
-            if (time >= nextDistanceCheckTime)
-            {
-                // Not doing nextDistanceCheckTime += DistanceCheckLoopUpdateInterval, because the amount of
-                // checks per second on average does not matter, the interval is more like the minimum time
-                // passed between checks.
-                nextDistanceCheckTime = time + TimeBetweenDistanceChecks;
-                DropIfTooFarAway();
-            }
-        }
-
-        private void DropIfTooFarAway()
-        {
-            float distance = Vector3.Distance(GetSnappedPosition(), pickupTransform.position);
-            // Also checking IsHeld since this script is using state chang events from
-            // SmartObjectSync, not the pickup and drop events from VRChat.
-            // The state change events run on all clients, not just the one holding the pickup.
-            // And even then the IsHeld could be false on the holding client too, if it got
-            // dropped already but we have not received a state change event from SmartObjectSync yet.
-            if (distance > maxAllowedDistanceAway && objSync.pickup.IsHeld)
-                objSync.pickup.Drop();
         }
 
         private Quaternion GetParentRotation(Transform t)
