@@ -14,6 +14,8 @@ namespace JanSharp
         /// </summary>
         [System.NonSerialized] public int customUpdateInternalIndex;
 
+        private bool receivedFirstStateChange = false;
+
         private const float TimeBetweenDistanceChecks = 0.25f;
         private float nextDistanceCheckTime;
 
@@ -53,6 +55,10 @@ namespace JanSharp
             pickupOffsetRotation = Quaternion.Inverse(toAim.rotation) * pickupTransform.rotation;
 
             objSync.AddListener(this);
+
+#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
+            Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  Start - pickup position: {pickupTransform.position}");
+#endif
         }
 
         public override void OnChangeState(SmartObjectSync sync, int oldState, int newState)
@@ -75,7 +81,30 @@ namespace JanSharp
             // STATE_CUSTOM - Could be anything I'd assume, so probably moving.
             // Note that if one wanted to check for STATE_CUSTOM one should use >= not ==.
 
-            bool nowMoving = sync.state != SmartObjectSync.STATE_SLEEPING && sync.state != SmartObjectSync.STATE_TELEPORTING;
+#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
+            Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  OnChangeState - from {objSync.StateToString(objSync.lastState)} to {objSync.StateToString(objSync.state)}");
+#endif
+            int state = objSync.state;
+            bool nowMoving = state != SmartObjectSync.STATE_SLEEPING && state != SmartObjectSync.STATE_TELEPORTING;
+
+            if (!receivedFirstStateChange)
+            {
+#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
+                Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  OnChangeState (inner) - first state change, pickup position: {pickupTransform.position}");
+#endif
+                // The default state of SmartObjectSyncs is STATE_TELEPORTING.
+                // This script never teleports the smart object sync (through its api, it does move the object).
+                // If an object got moved before a client joined the instance, they will therefore receive
+                // a state change event from STATE_TELEPORTING to STATE_SLEEPING, and that is our indication
+                // to update the toAim and toRotate transforms for the late joiner (the local client).
+                receivedFirstStateChange = true;
+                if (!nowMoving) // Only if it actually changed to a non moving state, don't cancel interpolation when picking up the first time.
+                {
+                    // Delayed, however, because the state change event gets raised before SmartObjectSync moves the object.
+                    SendCustomEventDelayedFrames(nameof(InitializeForLateJoiner), 1);
+                }
+            }
+
             if (isMoving == nowMoving)
                 return;
             isMoving = nowMoving;
@@ -83,6 +112,23 @@ namespace JanSharp
                 OnStartMoving();
             else
                 OnStopMoving();
+        }
+
+        public void InitializeForLateJoiner()
+        {
+#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
+            Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  InitializeForLateJoiner - pickup position: {pickupTransform.position}");
+#endif
+            Debug.Log($"<dlt> First state change, 1 frame later - pickup position: {pickupTransform.position}");
+            // Preemptively force finish interpolation. There is no need for interpolation for late joiners,
+            // for one, but also interpolation length is dynamic and there is no event for it finishing, so
+            // forcing it to finish immediately simplifies this logic.
+            objSync.interpolationStartTime = -1_000_000f;
+            objSync.Interpolate();
+#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
+            Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  InitializeForLateJoiner (inner) - pickup position after force finishing interpolation: {pickupTransform.position}");
+#endif
+            AimAndRotate();
         }
 
         public override void OnChangeOwner(SmartObjectSync sync, VRCPlayerApi oldOwner, VRCPlayerApi newOwner)
