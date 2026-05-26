@@ -1,7 +1,7 @@
 
-# Rotation Grip With Smart Obj Sync
+# Cannon Grip
 
-Rotate objects around an anchor point using VRC Pickups, synced using Smart Object Sync.
+Rotate objects with a swivelled mount around an anchor point via VRC Pickup grips, synced using Smart Object Sync.
 
 # Installing
 

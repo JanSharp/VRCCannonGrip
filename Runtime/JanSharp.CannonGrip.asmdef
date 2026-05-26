@@ -1,16 +1,15 @@
 {
-    "name": "JanSharp.RotationGripWithSmartObjSync.Editor",
+    "name": "JanSharp.CannonGrip",
+    "rootNamespace": "",
     "references": [
-        "JanSharp.RotationGripWithSmartObjSync",
         "JanSharp.Common",
-        "JanSharp.Common.Editor",
         "com.mmmaellon.smartobjectsync",
         "UdonSharp.Runtime",
-        "UdonSharp.Editor"
+        "VRC.SDK3",
+        "VRC.SDKBase",
+        "VRC.Udon"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

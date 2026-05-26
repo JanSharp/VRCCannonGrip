@@ -6,7 +6,7 @@ using VRC.SDKBase;
 namespace JanSharp
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class RotationGripWithSmartObjectSync : SmartObjectSyncListener
+    public class CannonAimAndRotationConstraint : SmartObjectSyncListener
     {
         [HideInInspector][SerializeField][SingletonReference] private UpdateManager updateManager;
         /// <summary>
@@ -56,8 +56,8 @@ namespace JanSharp
 
             objSync.AddListener(this);
 
-#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
-            Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  Start - pickup position: {pickupTransform.position}");
+#if CANNON_GRIP_DEBUG
+            Debug.Log($"[CannonGripDebug] CannonAimAndRotationConstraint  Start (inner) - pickup position: {pickupTransform.position}");
 #endif
         }
 
@@ -81,16 +81,16 @@ namespace JanSharp
             // STATE_CUSTOM - Could be anything I'd assume, so probably moving.
             // Note that if one wanted to check for STATE_CUSTOM one should use >= not ==.
 
-#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
-            Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  OnChangeState - from {objSync.StateToString(objSync.lastState)} to {objSync.StateToString(objSync.state)}");
+#if CANNON_GRIP_DEBUG
+            Debug.Log($"[CannonGripDebug] CannonAimAndRotationConstraint  OnChangeState - from {objSync.StateToString(objSync.lastState)} to {objSync.StateToString(objSync.state)}");
 #endif
             int state = objSync.state;
             bool nowMoving = state != SmartObjectSync.STATE_SLEEPING && state != SmartObjectSync.STATE_TELEPORTING;
 
             if (!receivedFirstStateChange)
             {
-#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
-                Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  OnChangeState (inner) - first state change, pickup position: {pickupTransform.position}");
+#if CANNON_GRIP_DEBUG
+                Debug.Log($"[CannonGripDebug] CannonAimAndRotationConstraint  OnChangeState (inner) - first state change, pickup position: {pickupTransform.position}");
 #endif
                 // The default state of SmartObjectSyncs is STATE_TELEPORTING.
                 // This script never teleports the smart object sync (through its api, it does move the object).
@@ -116,8 +116,8 @@ namespace JanSharp
 
         public void InitializeForLateJoiner()
         {
-#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
-            Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  InitializeForLateJoiner - pickup position: {pickupTransform.position}");
+#if CANNON_GRIP_DEBUG
+            Debug.Log($"[CannonGripDebug] CannonAimAndRotationConstraint  InitializeForLateJoiner - pickup position: {pickupTransform.position}");
 #endif
             Debug.Log($"<dlt> First state change, 1 frame later - pickup position: {pickupTransform.position}");
             // Preemptively force finish interpolation. There is no need for interpolation for late joiners,
@@ -125,8 +125,8 @@ namespace JanSharp
             // forcing it to finish immediately simplifies this logic.
             objSync.interpolationStartTime = -1_000_000f;
             objSync.Interpolate();
-#if ROTATION_GRIP_WITH_SMART_OBJECT_SYNC_DEBUG
-            Debug.Log($"[RotationGripSmartSync] RotationGripWithSmartObjectSync  InitializeForLateJoiner (inner) - pickup position after force finishing interpolation: {pickupTransform.position}");
+#if CANNON_GRIP_DEBUG
+            Debug.Log($"[CannonGripDebug] CannonAimAndRotationConstraint  InitializeForLateJoiner (inner) - pickup position after force finishing interpolation: {pickupTransform.position}");
 #endif
             AimAndRotate();
         }

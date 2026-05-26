@@ -2,7 +2,11 @@
 - [ ] Maybe do something about the sync mode of the RotationGripSnapBack script. Would have to use editor scripting to automatically set it to manual when using SmartObjectSync, and to Continuous when using VRCObjectSync
 - [ ] Remove snap back and auto drop logic from RotationGripWithSmartObjectSync, as the state changes to interpolating before sleeping upon dropping locally, which causes a delay before it gets snapped back. Use both the RotationGripSnapBack and the other script in order to get full functionality
 - [x] Fix RotationGripWithSmartObjectSync not updating toAim and toRotate upon loading in as a late joiner
-- [ ] Figure out better names for the scripts
-- [ ] Figure out a better package name
+- [x] Figure out better names for the scripts
+  - CannonGripRestrictor
+  - CannonAimAndRotationConstraint
+  - CannonSpecializedConstraint
+- [x] Figure out a better package name
+  - CannonGrip
 - [ ] Make a third script, one that requires more specific hierarchy to be set up, with the cannon being a child of the mount, and the rotations of the two being calculated through projections of vectors onto planes. Require mount and cannon to have well formed clean rotations, forward being forward, up being up, no weird rotations.
   - [ ] Add rotation limits, left, right, up, down, each as their own value

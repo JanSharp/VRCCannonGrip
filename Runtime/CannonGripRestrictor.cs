@@ -6,7 +6,7 @@ namespace JanSharp
 {
     [RequireComponent(typeof(VRC_Pickup))]
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // Manual because it's on the same object as the smart object sync script.
-    public class RotationGripSnapBack : UdonSharpBehaviour
+    public class CannonGripRestrictor : UdonSharpBehaviour
     {
         private bool distanceCheckLoopShouldBeRunning = false;
         private bool distanceCheckLoopIsRunning = false;
