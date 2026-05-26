@@ -10,7 +10,7 @@ namespace JanSharp
     {
         private bool distanceCheckLoopShouldBeRunning = false;
         private bool distanceCheckLoopIsRunning = false;
-        private const float DistanceCheckLoopUpdateInterval = 0.5f;
+        private const float TimeBetweenDistanceChecks = 0.25f;
 
         [SerializeField] private Transform toSnapTo;
         [Tooltip("When the pickup gets moved too far away from its snap position, drop it.")]
@@ -20,7 +20,9 @@ namespace JanSharp
         /// <para>In <see cref="toSnapTo"/> local space, respecting its scaling too.</para>
         /// </summary>
         private Vector3 offsetVector;
-        /// <inheritdoc cref="offsetVector"/>
+        /// <summary>
+        /// <para>In <see cref="toSnapTo"/> local space.</para>
+        /// </summary>
         private Quaternion offsetRotation;
         private VRC_Pickup pickup;
 
@@ -59,7 +61,7 @@ namespace JanSharp
             if (distanceCheckLoopIsRunning)
                 return;
             distanceCheckLoopIsRunning = true;
-            SendCustomEventDelayedSeconds(nameof(DistanceCheckLoop), DistanceCheckLoopUpdateInterval);
+            SendCustomEventDelayedSeconds(nameof(DistanceCheckLoop), TimeBetweenDistanceChecks);
         }
 
         private void StopDistanceCheckLoop()
@@ -77,7 +79,7 @@ namespace JanSharp
             float distance = Vector3.Distance(GetSnappedPosition(), transform.position);
             if (distance > maxAllowedDistanceAway)
                 pickup.Drop();
-            SendCustomEventDelayedSeconds(nameof(DistanceCheckLoop), DistanceCheckLoopUpdateInterval);
+            SendCustomEventDelayedSeconds(nameof(DistanceCheckLoop), TimeBetweenDistanceChecks);
         }
     }
 }
