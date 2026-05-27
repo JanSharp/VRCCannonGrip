@@ -1,5 +1,5 @@
 
-- [ ] Maybe do something about the sync mode of the RotationGripSnapBack script. Would have to use editor scripting to automatically set it to manual when using SmartObjectSync, and to Continuous when using VRCObjectSync
+- [x] Maybe do something about the sync mode of the RotationGripSnapBack script. Would have to use editor scripting to automatically set it to manual when using SmartObjectSync, and to Continuous when using VRCObjectSync
 - [x] Remove snap back and auto drop logic from RotationGripWithSmartObjectSync, as the state changes to interpolating before sleeping upon dropping locally, which causes a delay before it gets snapped back. Use both the RotationGripSnapBack and the other script in order to get full functionality
 - [x] Fix RotationGripWithSmartObjectSync not updating toAim and toRotate upon loading in as a late joiner
 - [x] Figure out better names for the scripts

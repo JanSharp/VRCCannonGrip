@@ -4,8 +4,13 @@ using VRC.SDKBase;
 
 namespace JanSharp
 {
+    // Not forcing sync mode since this script lives on the same object as other synced scripts, even though
+    // this script does no syncing.
+    // If this is used in conjunction with VRC Object Sync, it should be continuous.
+    // If this is used in conjunction with Smart Object Sync, it should be manual.
+    // Otherwise, if there is no other scripts on the object, it should be None.
+    // [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     [RequireComponent(typeof(VRC_Pickup))]
-    [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // Manual because it's on the same object as the smart object sync script.
     public class CannonGripRestrictor : UdonSharpBehaviour
     {
         private bool distanceCheckLoopShouldBeRunning = false;
