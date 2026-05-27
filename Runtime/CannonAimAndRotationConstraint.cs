@@ -39,7 +39,7 @@ namespace JanSharp
             Vector3 fromAimToPickup = pickupTransform.position - toAim.position;
             Quaternion toAimParentRotation = GetParentRotation(toAim);
             Quaternion neutralRotation = toAimParentRotation * aimNeutralLocalRotation;
-            // Normalized is redundant but more technically correct.
+            // Normalizing is redundant but more technically correct.
             Quaternion lookingRotation = Quaternion.LookRotation(fromAimToPickup.normalized, neutralRotation * Vector3.up);
             return Quaternion.Inverse(toAimParentRotation) * lookingRotation;
         }

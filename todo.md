@@ -8,5 +8,5 @@
   - CannonSpecializedConstraint
 - [x] Figure out a better package name
   - CannonGrip
-- [ ] Make a third script, one that requires more specific hierarchy to be set up, with the cannon being a child of the mount, and the rotations of the two being calculated through projections of vectors onto planes. Require mount and cannon to have well formed clean rotations, forward being forward, up being up, no weird rotations.
+- [x] Make a third script, one that requires more specific hierarchy to be set up, with the cannon being a child of the mount, and the rotations of the two being calculated through projections of vectors onto planes. Require mount and cannon to have well formed clean rotations, forward being forward, up being up, no weird rotations.
   - [ ] Add rotation limits, left, right, up, down, each as their own value
