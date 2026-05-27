@@ -7,6 +7,7 @@ namespace JanSharp
     public class CannonAimAndRotationConstraint : CannonSmartObjectSyncListenerBase
     {
         private Transform pickupTransform;
+        [Tooltip("The up direction of this transform defines the axis it will spin around.")]
         [SerializeField] private Transform toRotate;
         [SerializeField] private Transform toAim;
         [Tooltip("Optional. When set this transform's up direction will be used to orient the To Aim transform.")]
