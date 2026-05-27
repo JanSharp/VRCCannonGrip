@@ -1,6 +1,6 @@
 ﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
+using VRC.SDK3.Components;
 
 namespace JanSharp
 {
@@ -10,7 +10,7 @@ namespace JanSharp
     // If this is used in conjunction with Smart Object Sync, it should be manual.
     // Otherwise, if there is no other scripts on the object, it should be None.
     // [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    [RequireComponent(typeof(VRC_Pickup))]
+    [RequireComponent(typeof(VRCPickup))] // Must not use VRC.SDKBase.VRC_Pickup here, that is abstract.
     public class CannonGripRestrictor : UdonSharpBehaviour
     {
         private bool distanceCheckLoopShouldBeRunning = false;
@@ -29,11 +29,11 @@ namespace JanSharp
         /// <para>In <see cref="toSnapTo"/> local space.</para>
         /// </summary>
         private Quaternion offsetRotation;
-        private VRC_Pickup pickup;
+        private VRCPickup pickup;
 
         private void Start()
         {
-            pickup = GetComponent<VRC_Pickup>();
+            pickup = GetComponent<VRCPickup>();
             offsetVector = toSnapTo.InverseTransformPoint(transform.position);
             offsetRotation = Quaternion.Inverse(toSnapTo.rotation) * transform.rotation;
         }
