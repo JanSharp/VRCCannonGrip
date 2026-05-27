@@ -1,12 +1,10 @@
 ﻿using MMMaellon;
-using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 
 namespace JanSharp
 {
-    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class CannonAimAndRotationConstraint : SmartObjectSyncListener
+    public abstract class CannonSmartObjectSyncListenerBase : SmartObjectSyncListener
     {
         [HideInInspector][SerializeField][SingletonReference] private UpdateManager updateManager;
         /// <summary>
@@ -14,28 +12,13 @@ namespace JanSharp
         /// </summary>
         [System.NonSerialized] public int customUpdateInternalIndex;
 
-        [SerializeField][FindInParent] private SmartObjectSync objSync;
-        private Transform pickupTransform;
-        [SerializeField] private Transform toRotate;
-        [SerializeField] private Transform toAim;
-
-        private Quaternion aimNeutralLocalRotation;
-        private Quaternion aimLookingOffsetRotation;
-
-        private Quaternion aimToRotateOffsetRotation;
+        [SerializeField][FindInParent] protected SmartObjectSync objSync;
 
         private bool receivedFirstStateChange = false;
         private bool isMoving = false;
 
-        private void Start()
+        protected virtual void Start()
         {
-            pickupTransform = objSync.transform;
-
-            aimNeutralLocalRotation = toAim.localRotation;
-            aimLookingOffsetRotation = Quaternion.Inverse(GetLookingRotation()) * aimNeutralLocalRotation;
-
-            aimToRotateOffsetRotation = Quaternion.Inverse(GetAimRotationInSameSpaceAsToRotate()) * toRotate.localRotation;
-
             objSync.AddListener(this);
         }
 
@@ -93,7 +76,7 @@ namespace JanSharp
             // forcing it to finish immediately simplifies this logic.
             objSync.interpolationStartTime = -1_000_000f;
             objSync.Interpolate();
-            AimAndRotate();
+            UpdateConstraint();
         }
 
         public override void OnChangeOwner(SmartObjectSync sync, VRCPlayerApi oldOwner, VRCPlayerApi newOwner)
@@ -101,49 +84,28 @@ namespace JanSharp
 
         private void OnStartMoving()
         {
-            AimAndRotate();
+            UpdateConstraint();
             updateManager.Register(this);
         }
 
         private void OnStopMoving()
         {
-            AimAndRotate();
+            UpdateConstraint();
             updateManager.Deregister(this);
         }
 
         public void CustomUpdate()
         {
-            AimAndRotate();
+            UpdateConstraint();
         }
 
-        private Quaternion GetParentRotation(Transform t)
+        protected Quaternion GetParentRotation(Transform t)
         {
             Transform parent = t.parent;
             // To handle root game objects. Their parent's rotation is effectively and functionally identity/"none".
             return parent == null ? Quaternion.identity : parent.rotation;
         }
 
-        private Quaternion GetLookingRotation()
-        {
-            Vector3 fromAimToPickup = pickupTransform.position - toAim.position;
-            Quaternion toAimParentRotation = GetParentRotation(toAim);
-            Quaternion neutralRotation = toAimParentRotation * aimNeutralLocalRotation;
-            // Normalized is redundant but more technically correct.
-            Quaternion lookingRotation = Quaternion.LookRotation(fromAimToPickup.normalized, neutralRotation * Vector3.up);
-            return Quaternion.Inverse(toAimParentRotation) * lookingRotation;
-        }
-
-        private Quaternion GetAimRotationInSameSpaceAsToRotate() => Quaternion.Inverse(GetParentRotation(toRotate)) * toAim.rotation;
-
-        private void AimAndRotate()
-        {
-            Quaternion lookingRotation = GetLookingRotation();
-            toAim.localRotation = lookingRotation * aimLookingOffsetRotation;
-
-            Quaternion unconstrainedToRotateLocalRotation = GetAimRotationInSameSpaceAsToRotate() * aimToRotateOffsetRotation;
-            Vector3 unconstrainedForward = unconstrainedToRotateLocalRotation * Vector3.forward;
-            Vector3 up = toRotate.localRotation * Vector3.up; // Must also be in local space. Everything is in local space here.
-            toRotate.localRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(unconstrainedForward, up).normalized, up);
-        }
+        protected abstract void UpdateConstraint();
     }
 }
