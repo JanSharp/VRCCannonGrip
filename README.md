@@ -9,7 +9,7 @@ Rotate objects with a swivelled mount around an anchor point via VRC Pickup grip
 
 Head to my [VCC Listing](https://jansharp.github.io/vrc/vcclisting.xhtml) and follow the instructions there.
 
-Also make sure to add [Maellong's Listing](https://mmmaellon.github.io/MMMaellonVCCListing/) since this package depends on Smart Object Sync.
+Also make sure to add [Maellon's Listing](https://mmmaellon.github.io/MMMaellonVCCListing/) since this package depends on Smart Object Sync.
 
 # Contributing
 
