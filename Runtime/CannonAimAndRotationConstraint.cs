@@ -9,6 +9,8 @@ namespace JanSharp
         private Transform pickupTransform;
         [SerializeField] private Transform toRotate;
         [SerializeField] private Transform toAim;
+        [Tooltip("Optional. When set this transform's up direction will be used to orient the To Aim transform.")]
+        [SerializeField] private Transform toAimOverriddenUpDirection;
 
         private Quaternion aimNeutralLocalRotation;
         private Quaternion aimLookingOffsetRotation;
@@ -19,8 +21,12 @@ namespace JanSharp
         {
             pickupTransform = objSync.transform;
 
-            aimNeutralLocalRotation = toAim.localRotation;
-            aimLookingOffsetRotation = Quaternion.Inverse(GetLookingRotation()) * aimNeutralLocalRotation;
+            aimNeutralLocalRotation = toAimOverriddenUpDirection == null
+                ? toAim.localRotation
+                // Get toAimOverriddenUpDirection's rotation as though it was local to toAim's parent,
+                // which is the same space as toAim's own local rotation.
+                : (Quaternion.Inverse(GetParentRotation(toAim)) * toAimOverriddenUpDirection.rotation);
+            aimLookingOffsetRotation = Quaternion.Inverse(GetLookingRotation()) * toAim.localRotation;
 
             aimToRotateOffsetRotation = Quaternion.Inverse(GetAimRotationInSameSpaceAsToRotate()) * toRotate.localRotation;
 
