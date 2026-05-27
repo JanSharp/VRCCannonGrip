@@ -101,7 +101,6 @@ namespace JanSharp
 #if CANNON_GRIP_DEBUG
             Debug.Log($"[CannonGripDebug] CannonAimAndRotationConstraint  InitializeForLateJoiner - pickup position: {pickupTransform.position}");
 #endif
-            Debug.Log($"<dlt> First state change, 1 frame later - pickup position: {pickupTransform.position}");
             // Preemptively force finish interpolation. There is no need for interpolation for late joiners,
             // for one, but also interpolation length is dynamic and there is no event for it finishing, so
             // forcing it to finish immediately simplifies this logic.
