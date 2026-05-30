@@ -19,6 +19,9 @@ namespace JanSharp
 
         protected virtual void Start()
         {
+            // Doing it here rather than making the map creator do it manually in the inspector, for convenience.
+            // Editor scripting to automate it at build time would technically be possible, but when the listener
+            // script gets deleted, automatically cleaning that up would not be... clean.
             objSync.AddListener(this);
         }
 
@@ -74,6 +77,7 @@ namespace JanSharp
             // Preemptively force finish interpolation. There is no need for interpolation for late joiners,
             // for one, but also interpolation length is dynamic and there is no event for it finishing, so
             // forcing it to finish immediately simplifies this logic.
+            // This is the best method I found to tell the SmartObjectSync to force finish interpolation.
             objSync.interpolationStartTime = -1_000_000f;
             objSync.Interpolate();
             UpdateConstraint();

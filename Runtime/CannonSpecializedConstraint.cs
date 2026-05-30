@@ -40,7 +40,15 @@ namespace JanSharp
         /// </summary>
         private Vector3 middleDirectionFromCannonToPickup;
 
+        /// <summary>
+        /// <para>The rotation to get from <see cref="GetMountLookingAtPickup"/> to <see cref="mount"/>'s
+        /// actual rotation, based on how <see cref="mount"/> was rotated in the scene.</para>
+        /// </summary>
         private Quaternion mountRotationOffset;
+        /// <summary>
+        /// <para>The rotation to get from <see cref="GetCannonLookingAtPickup"/> to <see cref="cannon"/>'s
+        /// actual rotation, based on how <see cref="cannon"/> was rotated in the scene.</para>
+        /// </summary>
         private Quaternion cannonRotationOffset;
 
         protected override void Start()
@@ -71,7 +79,7 @@ namespace JanSharp
             // limits must be rotated a bit such that it sits right between the left and right limits.
             float maxHorizontalRotation = (maxLeftRotation + maxRightRotation) / 2f;
             maxHorizontalRadians = maxHorizontalRotation * Mathf.Deg2Rad;
-            // Determined order of operands for subtraction via trial and error.
+            // Determined order of operands for subtraction (so direction to rotate) via trial and error.
             Quaternion shift = Quaternion.AngleAxis(maxHorizontalRotation - maxLeftRotation, Vector3.up);
             Quaternion middleRotation = GetParentRotation(mount) * shift;
             // The projected direction is in world space, make it live in the mount's parent local space.
@@ -84,6 +92,7 @@ namespace JanSharp
             // Copy paste, except for how shift gets applied to middleRotation.
             float maxVerticalRotation = (maxDownRotation + maxUpRotation) / 2f;
             maxVerticalRadians = maxVerticalRotation * Mathf.Deg2Rad;
+            // Determined order of operands for subtraction (so direction to rotate) via trial and error.
             Quaternion shift = Quaternion.AngleAxis(maxDownRotation - maxVerticalRotation, Vector3.right);
             // Must do some odd math here as the shift must be applied relative to the mount's rotation,
             // however the final vector must be rotated based on the cannon's parent rotation.
@@ -93,10 +102,9 @@ namespace JanSharp
         }
 
         // Calculate the vector which points from the mount to the pickup first, then project that onto the desired plane.
-        // Projecting the pickup position would also be an option, however then the mount position would also have to
-        // be projected onto the same plane before doing math with those two positions. Which would be a bit over complicated.
+        // It'd also be possible tp project the 2 positions individually first and then doing the subtraction, but that'd be a bit redundant.
         private Vector3 GetProjectedVectorFromMountToPickup() => Vector3.ProjectOnPlane(pickupTransform.position - mount.position, mount.up);
-        // Normalizing is redundant but more technically correct.
+        // LookRotation handles non normalized vectors, but it is more technically correct.
         private Quaternion GetMountLookingAtPickup() => Quaternion.LookRotation(GetProjectedVectorFromMountToPickup().normalized, mount.up);
 
         // Copy paste.
@@ -106,6 +114,8 @@ namespace JanSharp
         private Quaternion GetMountLookingAtPickupLimited()
         {
             Vector3 projected = GetProjectedVectorFromMountToPickup().normalized;
+            // Using the precomputed direction which sits right in the middle of maximum allowed rotation
+            // as well as the precomputed max radians makes this relatively straight forward. Pun not intended :D
             Vector3 forward = Vector3.RotateTowards(
                 GetParentRotation(mount) * middleDirectionFromMountToPickup,
                 projected,

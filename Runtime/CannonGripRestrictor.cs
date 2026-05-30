@@ -13,6 +13,12 @@ namespace JanSharp
     [RequireComponent(typeof(VRCPickup))] // Must not use VRC.SDKBase.VRC_Pickup here, that is abstract.
     public class CannonGripRestrictor : UdonSharpBehaviour
     {
+        /// <summary>
+        /// <para>Having this as a separate variable from <see cref="distanceCheckLoopIsRunning"/> prevents
+        /// multiple update loops from running effectively simultaneously. Imagine a
+        /// <see cref="StopDistanceCheckLoop"/> call immediately followed by a
+        /// <see cref="StartDistanceCheckLoop"/> call.</para>
+        /// </summary>
         private bool distanceCheckLoopShouldBeRunning = false;
         private bool distanceCheckLoopIsRunning = false;
         private const float TimeBetweenDistanceChecks = 0.25f;
@@ -83,7 +89,7 @@ namespace JanSharp
             }
             float distance = Vector3.Distance(GetSnappedPosition(), transform.position);
             if (distance > maxAllowedDistanceAway)
-                pickup.Drop();
+                pickup.Drop(); // Raises OnDrop.
             SendCustomEventDelayedSeconds(nameof(DistanceCheckLoop), TimeBetweenDistanceChecks);
         }
     }
