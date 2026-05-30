@@ -12,7 +12,7 @@ namespace JanSharp
         /// </summary>
         [System.NonSerialized] public int customUpdateInternalIndex;
 
-        [SerializeField][FindInParent] protected SmartObjectSync objSync;
+        [SerializeField] protected SmartObjectSync objSync;
 
         private bool receivedFirstStateChange = false;
         private bool isMoving = false;
