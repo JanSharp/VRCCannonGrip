@@ -13,7 +13,7 @@
   "vpmDependencies": {
     "com.vrchat.worlds": "^3.10.x",
     "com.jansharp.common": ">=1.0.0",
-    "com.mmmaellon.smartobjectsync": "3.10.16"
+    "com.mmmaellon.smartobjectsync": ">=3.10.16"
   },
   "url": "https://github.com/JanSharp/VRCCannonGrip/releases/download/v1.0.0/com.jansharp.cannon-grip.zip",
   "changelogUrl": "https://github.com/JanSharp/VRCCannonGrip/blob/v1.0.0/CHANGELOG.md"
